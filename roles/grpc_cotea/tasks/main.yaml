@@ -1,0 +1,24 @@
+- name: install base packages
+  apt:
+    name:
+      - "git"
+    update_cache: yes
+  become: yes
+
+- name: Clone a github repository
+  git:
+    repo: "{{ grpc_cotea_repo }}"
+    dest: "/home/{{ user }}/grpc_cotea"
+    clone: yes
+    update: yes
+
+- name: Install and run
+  shell: |
+    python3 -m pip install grpcio==1.37.1
+    python3 -m pip install grpcio-tools==1.37.1
+    export GRPC_ENABLE_FORK_SUPPORT=0
+    export GRPC_POLL_STRATEGY=poll
+    cd /home/{{ user }}/grpc_cotea
+    python grpc_server.py
+  become: yes
+    

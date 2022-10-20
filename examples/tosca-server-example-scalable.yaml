@@ -25,12 +25,12 @@ topology_template:
         os:
           properties:
             distribution: ubuntu
-            version: 21.04
+            version: 18.04
         scalable:
           properties:
             min_instances: 1
-            default_instances: 2
-            max_instances: 2
+            default_instances: 3
+            max_instances: 3
     software_for_cumulus:
       requirements:
         - host: testing_tosca

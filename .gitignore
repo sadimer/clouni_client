@@ -31,6 +31,5 @@ test
 *.log
 
 template.yaml
-tasks*
 hosts.ini
 id_vars*
