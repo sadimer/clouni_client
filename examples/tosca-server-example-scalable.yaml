@@ -1,0 +1,43 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+topology_template:
+  node_templates:
+    testing_tosca:
+      type: tosca.nodes.Compute
+      properties:
+        meta: "cube_master=true"
+        public_address: 10.100.150.11
+        networks:
+          default:
+            network_name: test_ext
+      capabilities:
+        host:
+          properties:
+            num_cpus: 1
+            disk_size: 10 GiB
+            mem_size: 1024 MiB
+        endpoint:
+          properties:
+            protocol: tcp
+            port: 22
+            initiator: target
+            ip_address: 0.0.0.0/0
+        os:
+          properties:
+            distribution: ubuntu
+            version: 21.04
+        scalable:
+          properties:
+            min_instances: 1
+            default_instances: 2
+            max_instances: 2
+    software_for_cumulus:
+      requirements:
+        - host: testing_tosca
+      type: tosca.nodes.SoftwareComponent
+      interfaces:
+        Standard:
+          create:
+            implementation: ansible-operation-example.yaml
+            inputs:
+              test: test

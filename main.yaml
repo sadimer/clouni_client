@@ -1,0 +1,14 @@
+- name: "Clouni provider tool install"
+  hosts: provider_tool_host
+  tasks:
+    - include_role: provider_tool
+
+- name: "Clouni configuration tool"
+  hosts: configuration_tool_host
+  tasks:
+    - include_role: configuration_tool
+
+- name: "Clouni configuration tool"
+  hosts: grpc_cotea_host
+  tasks:
+    - include_role: grpc_cotea

@@ -1,0 +1,6 @@
+six
+PyYAML
+grpcio==1.37.1
+paramiko
+scp
+grpcio-tools==1.37.1

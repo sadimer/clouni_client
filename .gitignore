@@ -1,0 +1,36 @@
+# pbr generates these
+AUTHORS
+ChangeLog
+
+# Packages
+.eggs
+*.egg
+*.egg-info
+build
+dist
+
+# Editor
+.idea/
+*.pyc
+
+# Ansible credentials
+clouds.yaml
+ansible-hosts
+
+# Testing examples
+tosca-server-example-output*
+tosca-network-and-port-example-output*
+
+venv
+my_definitions
+my_examples
+my_templates
+
+test
+
+*.log
+
+template.yaml
+tasks*
+hosts.ini
+id_vars*

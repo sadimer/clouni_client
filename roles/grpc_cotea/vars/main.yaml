@@ -1,0 +1,2 @@
+user: ubuntu
+grpc_cotea_repo: https://{{ githubuser | urlencode }}:{{ githubpassword | urlencode }}gitlab.at.ispras.ru/cloud-group/grpc-cotea
