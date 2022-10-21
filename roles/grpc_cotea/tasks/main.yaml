@@ -2,23 +2,36 @@
   apt:
     name:
       - "git"
+      - "wget"
+      - "python3-pip"
     update_cache: yes
   become: yes
-
-- name: Clone a github repository
-  git:
-    repo: "{{ grpc_cotea_repo }}"
-    dest: "/home/{{ user }}/grpc_cotea"
-    clone: yes
-    update: yes
 
 - name: Install and run
   shell: |
     python3 -m pip install grpcio==1.37.1
     python3 -m pip install grpcio-tools==1.37.1
+    wget {{ grpc_cotea_url }}
+    python3 -m pip install grpccotea-0.9.3-py3-none-any.whl
     export GRPC_ENABLE_FORK_SUPPORT=0
     export GRPC_POLL_STRATEGY=poll
-    cd /home/{{ user }}/grpc_cotea
-    python grpc_server.py
-  become: yes
+  become: true
+
+- name: Start server
+  shell: |
+    grpc-cotea --port {{ port }} &
+  become: true
+
+- name: Create openstack dir
+  shell: |
+    mkdir -p /etc/openstack
+  become: true
+
+- name: Copy file
+  become: true
+  copy:
+    src: "/etc/openstack/clouds.yaml"
+    dest: "/etc/openstack"
+
     
+

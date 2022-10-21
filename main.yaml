@@ -1,3 +1,9 @@
+- name: "Grpc cotea"
+  hosts: grpc_cotea_host
+  tasks:
+    - include_role:
+        name: grpc_cotea
+
 - name: "Clouni provider tool install"
   hosts: provider_tool_host
   tasks:
@@ -9,9 +15,3 @@
   tasks:
     - include_role:
         name: configuration_tool
-
-- name: "Clouni configuration tool"
-  hosts: grpc_cotea_host
-  tasks:
-    - include_role:
-        name: grpc_cotea
