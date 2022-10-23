@@ -16,7 +16,7 @@
   become: true
 
 - name: Start server
-  command: /usr/local/bin/grpc-cotea --port {{ port }} &
+  command: nohup /usr/local/bin/grpc-cotea --port {{ port }} &
   become: true
 
 - name: Create openstack dir
