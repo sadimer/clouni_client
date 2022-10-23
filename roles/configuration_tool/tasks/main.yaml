@@ -34,4 +34,5 @@
 - name: Run server
   shell: |
     clouni-configuration-tool --host 0.0.0.0 -p {{ port }}
+  become: yes
     
