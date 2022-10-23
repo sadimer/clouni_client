@@ -33,5 +33,5 @@
 
 - name: Run server
   shell: |
-    clouni-provider-tool --host 0.0.0.0 -p {{ port }}
+    /usr/local/bin/clouni-provider-tool --host 0.0.0.0 -p {{ port }}
   become: yes
