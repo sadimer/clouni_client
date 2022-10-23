@@ -1,4 +1,4 @@
 user: ubuntu
 provider_tool_repo: https://github.com/sadimer/clouni_provider_tool
 toscaparser_repo: https://github.com/bura2017/tosca-parser.git
-port: 700
+port: 5000
