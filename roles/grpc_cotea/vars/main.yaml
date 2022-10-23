@@ -1,3 +1,3 @@
 user: ubuntu
 grpc_cotea_url: https://test-files.pythonhosted.org/packages/22/24/fd0160b1dfcfcc21e6c2d2a263e60e9c46787b68c565fa8156af41cc5e92/grpccotea-0.9.3-py3-none-any.whl
-port: 700
+port: 5000
