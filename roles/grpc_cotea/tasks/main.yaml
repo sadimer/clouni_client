@@ -11,6 +11,7 @@
     python3 -m pip install grpcio==1.37.1
     python3 -m pip install grpcio-tools==1.37.1
     python3 -m pip install -i https://test.pypi.org/simple/ grpc-cotea==0.9.2
+    python3 -m pip install ansible==2.9.19
     export GRPC_ENABLE_FORK_SUPPORT=0
     export GRPC_POLL_STRATEGY=poll
   become: true
@@ -22,6 +23,7 @@
 - name: Create openstack dir
   shell: |
     mkdir -p /etc/openstack
+    mkdir -p /tmp/clouni
   become: true
 
 - name: Copy file
