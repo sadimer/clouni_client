@@ -22,6 +22,9 @@ def createSSHClient(server, user):
     return client
 
 
+def get_project_root_path():
+    return os.path.dirname(os.path.dirname(__file__))
+
 def main(args=None):
     if args is None:
         args = sys.argv[1:]
@@ -119,7 +122,7 @@ def main(args=None):
 
     (args, args_list) = parser.parse_known_args(args)
 
-    provider_tool_user = os.environ.get("CLOUNI_PROVIDER_TOOL_USER")
+    provider_tool_user = os.environ.get("GRPC_COTEA_HOST_USER")
     extra = {}
     for i in args.extra:
         i_splitted = [j.strip() for j in i.split('=', 1)]
@@ -134,24 +137,26 @@ def main(args=None):
                     extra[k] = int(v)
                 else:
                     extra[k] = float(v)
-
-    if args.module in ['provider_tool', 'deploy', 'delete']:
-        if default_configuration_tool_endpoint.find('127.0.0.1') == -1 and default_configuration_tool_endpoint.find(
+    if default_grpc_cotea_endpoint:
+        if default_grpc_cotea_endpoint.find('127.0.0.1') == -1 and default_grpc_cotea_endpoint.find(
                 'localhost') == -1:
             if not provider_tool_user:
-                print("Warning! CLOUNI_PROVIDER_TOOL_USER not set. "
-                      "You may have problems with access to your custom artifacts for TOSCA operations!")
+                print("Warning! GRPC_COTEA_HOST_USER not set. "
+                      "You may have problems with access to your custom artifacts for TOSCA operations and ansible modules!")
             else:
-                server, port = default_configuration_tool_endpoint.split(":")
+                server, port = default_grpc_cotea_endpoint.split(":")
                 ssh = createSSHClient(server, provider_tool_user)
                 client = SCPClient(ssh.get_transport())
                 if not client:
                     raise Exception(
-                        'Failed to connect % via ssh for adding custom artifacts' % default_configuration_tool_endpoint)
-                client.put('artifacts', '/tmp/clouni', recursive=True)
-        else:
-            copy_tree('artifacts', '/tmp/clouni/artifacts')
+                        'Failed to connect % via ssh for adding custom artifacts' % default_grpc_cotea_endpoint)
+                client.put(os.path.join(get_project_root_path(), 'ansible_plugins'), '/tmp/clouni/', recursive=True)
+                client.put(os.path.join(get_project_root_path(), 'artifacts'), '/tmp/clouni/', recursive=True)
 
+        else:
+            copy_tree(os.path.join(get_project_root_path(), 'ansible_plugins'), '/tmp/clouni/ansible_plugins')
+            copy_tree(os.path.join(get_project_root_path(), 'artifacts'), '/tmp/clouni/artifacts')
+    if args.module in ['provider_tool', 'deploy', 'delete']:
         channel = grpc.insecure_channel(args.provider_tool_endpoint)
         stub = api_pb2_grpc.ClouniProviderToolStub(channel)
         request = ClouniProviderToolRequest()

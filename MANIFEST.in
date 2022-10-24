@@ -1,1 +1,3 @@
-recursive-include provider_tool *.cfg *.yaml *.json
+recursive-include ansible_plugins *.cfg *.yaml *.json *.py
+recursive-include artifacts *.cfg *.yaml *.json *.py
+recursive-include grpc_client *.cfg *.yaml *.json *.py
