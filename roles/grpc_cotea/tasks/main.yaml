@@ -10,15 +10,9 @@
   shell: |
     python3 -m pip install grpcio==1.37.1
     python3 -m pip install grpcio-tools==1.37.1
-    python3 -m pip install -i https://test.pypi.org/simple/ grpc-cotea==0.9.2
+    python3 -m pip install -i https://test.pypi.org/simple/ grpc-cotea==0.9.5
     python3 -m pip install ansible==2.9.19
-    python3 -m pip install openstacksdk==0.46.0
-    export GRPC_ENABLE_FORK_SUPPORT=0
-    export GRPC_POLL_STRATEGY=poll
-  become: true
-
-- name: Start server
-  shell: nohup /usr/local/bin/grpc-cotea --port {{ port }} --host 0.0.0.0 &
+    python3 -m pip install openstacksdk==0.46.1
   become: true
 
 - name: Create openstack dir
@@ -33,6 +27,24 @@
   copy:
     src: "/etc/openstack/clouds.yaml"
     dest: "/etc/openstack"
+
+- name: create systemd config for grpc-cotea
+  template:
+    src: "grpc-cotea.service.j2"
+    dest: "/etc/systemd/system/grpc-cotea.service"
+  become: yes
+
+- name: refresh daemon
+  shell: |
+    systemctl daemon-reload
+  become: yes
+
+- name: enable and start grpc-cotea service
+  service:
+    name: grpc-cotea
+    state: started
+    enabled: yes
+  become: yes
 
     
 

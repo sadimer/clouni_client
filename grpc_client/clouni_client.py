@@ -122,7 +122,7 @@ def main(args=None):
 
     (args, args_list) = parser.parse_known_args(args)
 
-    provider_tool_user = os.environ.get("GRPC_COTEA_HOST_USER")
+    tool_user = os.environ.get("GRPC_COTEA_HOST_USER")
     extra = {}
     for i in args.extra:
         i_splitted = [j.strip() for j in i.split('=', 1)]
@@ -140,12 +140,12 @@ def main(args=None):
     if default_grpc_cotea_endpoint:
         if default_grpc_cotea_endpoint.find('127.0.0.1') == -1 and default_grpc_cotea_endpoint.find(
                 'localhost') == -1:
-            if not provider_tool_user:
+            if not tool_user:
                 print("Warning! GRPC_COTEA_HOST_USER not set. "
                       "You may have problems with access to your custom artifacts for TOSCA operations and ansible modules!")
             else:
                 server, port = default_grpc_cotea_endpoint.split(":")
-                ssh = createSSHClient(server, provider_tool_user)
+                ssh = createSSHClient(server, tool_user)
                 client = SCPClient(ssh.get_transport())
                 if not client:
                     raise Exception(

@@ -32,5 +32,5 @@
   become: yes
 
 - name: Run server
-  shell: nohup /usr/local/bin/clouni-provider-tool --host 0.0.0.0 -p {{ port }}
+  shell: nohup clouni-provider-tool --host 0.0.0.0 -p {{ port }}
   become: yes
