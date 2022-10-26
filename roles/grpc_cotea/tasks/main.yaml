@@ -13,6 +13,7 @@
     python3 -m pip install -i https://test.pypi.org/simple/ grpc-cotea==0.9.5
     python3 -m pip install ansible==2.9.19
     python3 -m pip install openstacksdk==0.46.1
+    python3 -m pip install boto3 botocore urllib3 bs4
   become: true
 
 - name: Create openstack dir
@@ -20,7 +21,14 @@
   become: true
 
 - name: Create openstack dir
-  shell: mkdir -p /tmp/clouni/ansible
+  shell: |
+    mkdir -p /tmp/clouni/ansible
+    mkdir -p /tmp/clouni/artifacts
+
+- name: Generate an OpenSSH keypair with the default values (4096 bits, rsa)
+  community.crypto.openssh_keypair:
+    path: /root/.ssh/id_rsa
+  become: true
 
 - name: Copy file
   become: true
@@ -28,23 +36,9 @@
     src: "/etc/openstack/clouds.yaml"
     dest: "/etc/openstack"
 
-- name: create systemd config for grpc-cotea
-  template:
-    src: "grpc-cotea.service.j2"
-    dest: "/etc/systemd/system/grpc-cotea.service"
-  become: yes
-
-- name: refresh daemon
-  shell: |
-    systemctl daemon-reload
-  become: yes
-
-- name: enable and start grpc-cotea service
-  service:
-    name: grpc-cotea
-    state: started
-    enabled: yes
-  become: yes
+- name: Run server
+  shell: setsid grpc-cotea -p {{ port }} --host {{ ansible_default_ipv4.address }} >/home/{{ user }}/cotea.log 2>&1 < /dev/null &
+  become: true
 
     
 
