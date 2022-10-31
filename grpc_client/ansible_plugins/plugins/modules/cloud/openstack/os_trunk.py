@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 # Copyright (c) 2015 Hewlett-Packard Development Company, L.P.
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -15,7 +15,7 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = '''
 ---
 module: os_trunk
-short_description: Add/Update/Delete ports from an OpenStack cloud.
+short_description: Add/Update/Delete trunks from an OpenStack cloud.
 extends_documentation_fragment: openstack
 author: "Roman Stolyarov (Sadimer)"
 version_added: "2.0"
@@ -34,6 +34,14 @@ options:
      description:
         - List of dicts with port IDs or names of trunk subports.
      required: false
+   add_sub_port:
+     description:
+        - Add 1 subport: port_id, segmentation_id, segmentation_type
+     required: false 
+   del_sub_port:
+     description:
+        - Delete 1 subport: port_id, segmentation_id, segmentation_type
+     required: false 
    state:
      description:
        - Should the resource be present or absent.
@@ -68,20 +76,14 @@ from ansible.module_utils.openstack import openstack_full_argument_spec, opensta
 
 
 def _needs_update(module, trunk, cloud):
-    if module.params['sub_ports'] is not None and trunk.get('sub_ports') is None:
-        return True
-    if module.params['sub_ports'] is None and trunk.get('sub_ports') is not None:
-        return True
-    if len(module.params['sub_ports']) != len(trunk.get('sub_ports')):
-        return True
-    return False
+    if module.params['sub_ports'] is None:
+        return False
+    return True
 
 
 def _get_subports(module, trunk, cloud):
     if module.params['sub_ports'] is not None and trunk['sub_ports'] is None:
         trunk['sub_ports'] = []
-    if module.params['sub_ports'] is None and trunk['sub_ports'] is not None:
-        module.params['sub_ports'] = []
     new_subports = []
     subports = []
     for elem in module.params['sub_ports']:
@@ -126,6 +128,8 @@ def main():
         port=dict(required=False),
         state=dict(default='present', choices=['absent', 'present']),
         sub_ports=dict(type='list', required=False),
+        add_sub_port=dict(type='dict', required=False),
+        del_sub_port=dict(type='dict', required=False),
     )
     module = AnsibleModule(argument_spec, supports_check_mode=True)
 
@@ -172,6 +176,11 @@ def main():
                     args = {'port_id': port['id'], 'sub_ports': module.params['sub_ports']}
                 result = cloud.network.create_trunk(**args)
                 changed = True
+                trunk = result
+            if module.params['add_sub_port'] is not None:
+                result = cloud.network.add_trunk_subports(trunk, [module.params['add_sub_port']])
+            if module.params['del_sub_port'] is not None:
+                result = cloud.network.delete_trunk_subports(trunk, [module.params['del_sub_port']])
             module.exit_json(changed=changed, id=result['id'], trunk=result)
         if state == 'absent':
             if trunk:

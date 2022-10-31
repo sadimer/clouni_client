@@ -150,8 +150,8 @@ def main(args=None):
                 if not client:
                     raise Exception(
                         'Failed to connect % via ssh for adding custom artifacts' % default_grpc_cotea_endpoint)
-                client.put(os.path.join(get_project_root_path(), 'ansible_plugins'), '/tmp/clouni/', recursive=True)
-                client.put(os.path.join(get_project_root_path(), 'artifacts'), '/tmp/clouni/', recursive=True)
+                client.put(os.path.join(get_project_root_path(), 'grpc_client', 'ansible_plugins'), '/tmp/clouni/', recursive=True)
+                client.put(os.path.join(get_project_root_path(), 'grpc_client', 'artifacts'), '/tmp/clouni/', recursive=True)
 
         else:
             copy_tree(os.path.join(get_project_root_path(), 'ansible_plugins'), '/tmp/clouni/ansible_plugins')
