@@ -21,6 +21,9 @@ def createSSHClient(server, user):
     client.connect(server, username=user)
     return client
 
+class NoAliasDumper(yaml.SafeDumper):
+    def ignore_aliases(self, data):
+        return True
 
 def get_project_root_path():
     return os.path.dirname(os.path.dirname(__file__))
@@ -197,7 +200,7 @@ def main(args=None):
         else:
             request.grpc_cotea_endpoint = ""
 
-        request.extra = yaml.dump(extra)
+        request.extra = yaml.dump(extra, Dumper=NoAliasDumper)
         response = stub.ClouniProviderTool(request)
     elif args.module in ['configuration_tool']:
         channel = grpc.insecure_channel(args.configuration_tool_endpoint)
@@ -225,7 +228,7 @@ def main(args=None):
         else:
             request.grpc_cotea_endpoint = ""
 
-        request.extra = yaml.dump({'global': extra})
+        request.extra = yaml.dump({'global': extra}, Dumper=NoAliasDumper)
         response = stub.ClouniConfigurationTool(request)
     else:
         raise Exception("Unknown module type")

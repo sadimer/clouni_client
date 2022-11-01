@@ -1,0 +1,81 @@
+node_types:
+  clouni.nodes.ServerExample:
+    derived_from: tosca.nodes.SoftwareComponent
+    interfaces:
+      Standard:
+        configure:
+          implementation: ansible-operation-example.yaml
+          inputs:
+            test: { concat: [ "v", { get_property: [ SELF, component_version ] } ] }
+            test_2: { token: [ { get_property: [ HOST, public_address ] }, '.', 1 ] }
+        create:
+          implementation: ansible-operation-example.yaml
+          inputs:
+            test: test
+topology_template:
+  inputs:
+    kubernetes_version:
+      type: string
+      default: 1.21.0
+  node_templates:
+    service_1:
+      properties:
+        component_version: 1.0
+      requirements:
+      - host:
+          node: tosca_server_example
+          relationship: test_relationship
+      type: clouni.nodes.ServerExample
+      interfaces:
+        Standard:
+          configure:
+            implementation: ansible-operation-example.yaml
+            inputs:
+              test_1: { join: [ ["prefix", { get_property: [ SELF, component_version ] }, "suffix" ], "_" ] }
+          create:
+            implementation:
+              primary: ansible-operation-example.yaml
+              dependencies:
+                - example-1.yaml
+                - example-2.yaml
+            inputs:
+              test: { join: [ ["prefix", 1111, "suffix" ], "_" ] }
+    tosca_server_example:
+      interfaces:
+        Standard:
+          configure:
+            implementation: ansible-operation-example.yaml
+            inputs:
+              test: test
+      properties:
+        public_address: 10.100.150.11
+      type: tosca.nodes.Compute
+  relationship_templates:
+    test_relationship:
+      properties:
+        test: value
+      interfaces:
+        Configure:
+          add_source:
+            implementation: ansible-operation-example.yaml
+            inputs:
+              test: test
+          post_configure_source:
+            implementation: ansible-operation-example.yaml
+            inputs:
+              test: { get_property: [ SOURCE, component_version ] }
+          post_configure_target:
+            implementation: ansible-operation-example.yaml
+            inputs:
+              test: { get_property: [ TARGET, public_address ] }
+          pre_configure_source:
+            implementation: ansible-operation-example.yaml
+            inputs:
+              test: test
+          pre_configure_target:
+            implementation: ansible-operation-example.yaml
+            inputs:
+              test: test
+      type: tosca.relationships.HostedOn
+tosca_definitions_version: tosca_simple_yaml_1_0
+
