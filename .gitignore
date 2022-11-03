@@ -31,5 +31,5 @@ test
 *.log
 
 template.yaml
-hosts.ini
+ansible_installer/hosts.ini
 id_vars*

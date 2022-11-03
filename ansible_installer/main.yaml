@@ -10,7 +10,7 @@
     - include_role:
         name: provider_tool
 
-- name: "Clouni configuration tool"
+- name: "Clouni configuration tool install"
   hosts: configuration_tool_host
   tasks:
     - include_role:

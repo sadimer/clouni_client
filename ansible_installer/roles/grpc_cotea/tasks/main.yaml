@@ -1,0 +1,52 @@
+- name: install base packages
+  package:
+    name: "python3-pip"
+    state: latest
+    update_cache: yes
+  become: yes
+
+- name: install requirements
+  pip:
+    name:
+      - grpcio==1.37.1
+      - grpcio-tools==1.37.1
+      - grpc-cotea==0.9.5
+      - ansible==2.9.19
+      - openstacksdk==0.46.1
+      - boto3
+      - botocore
+      - urllib3
+      - bs4
+    extra_args: -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple
+  become: yes
+
+- name: create openstack dir
+  file:
+    path: /etc/openstack
+    state: directory
+  become: yes
+
+- name: create tmp clouni dir
+  file:
+    path: /tmp/clouni
+    state: directory
+    mode: 0777
+  become: yes
+
+- name: generate an OpenSSH keypair with the default values (4096 bits, rsa)
+  community.crypto.openssh_keypair:
+    path: /root/.ssh/id_rsa
+  become: true
+
+- name: copy file
+  become: true
+  copy:
+    src: /etc/openstack/clouds.yaml
+    dest: /etc/openstack
+
+- name: run server
+  shell: setsid grpc-cotea -p {{ port }} --host {{ ansible_default_ipv4.address }} > $HOME/cotea.log 2>&1 < /dev/null &
+  become: true
+
+    
+

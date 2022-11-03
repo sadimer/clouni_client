@@ -1,0 +1,16 @@
+- name: install base packages
+  package:
+    name: "python3-pip"
+    state: latest
+    update_cache: yes
+  become: yes
+
+- name: install requirements
+  pip:
+    name: clouni-configuration-tool
+    extra_args: -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple
+  become: yes
+
+- name: run server
+  shell: nohup clouni-configuration-tool --host 0.0.0.0 -p {{ port }}
+  become: yes
