@@ -4,26 +4,22 @@ services:
   clouni_provider_tool:
     build: provider_tool/
     ports:
-      - "50051:50051"
+      - "50051:50051/tcp"
+    network_mode: host
 
   clouni_configuration_tool:
     build: configuration_tool/
     ports:
-      - "50052:50052"
+      - "50052:50052/tcp"
+    network_mode: host
 
   grpc_cotea:
     volumes:
+      - /tmp/clouni:/tmp/clouni
       - /etc/openstack:/tmp/openstack
       - ~/.ssh:/tmp/ssh
-    command: bash -c "cp -r /tmp/openstack /etc/openstack" && bash -c "cp -r /tmp/ssh ~/.ssh"
+    command: bash -c -l "cp -r /tmp/openstack /etc/openstack && cp -r /tmp/ssh ~/.ssh && grpc-cotea -p 50151 --host 0.0.0.0"
     build: grpc_cotea/
     ports:
-      - "50151:50151"
-
-  clouni_client:
-    build: client/
+      - "50151:50151/tcp"
     network_mode: host
-    depends_on:
-      - clouni_configuration_tool
-      - clouni_provider_tool
-      - grpc_cotea

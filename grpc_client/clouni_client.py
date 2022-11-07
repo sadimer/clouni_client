@@ -157,8 +157,8 @@ def main(args=None):
                 client.put(os.path.join(get_project_root_path(), 'grpc_client', 'artifacts'), '/tmp/clouni/', recursive=True)
 
         else:
-            copy_tree(os.path.join(get_project_root_path(), 'ansible_plugins'), '/tmp/clouni/ansible_plugins')
-            copy_tree(os.path.join(get_project_root_path(), 'artifacts'), '/tmp/clouni/artifacts')
+            copy_tree(os.path.join(get_project_root_path(), 'grpc_client', 'ansible_plugins'), '/tmp/clouni/ansible_plugins')
+            copy_tree(os.path.join(get_project_root_path(), 'grpc_client', 'artifacts'), '/tmp/clouni/artifacts')
     if args.module in ['provider_tool', 'deploy', 'delete']:
         channel = grpc.insecure_channel(args.provider_tool_endpoint)
         stub = api_pb2_grpc.ClouniProviderToolStub(channel)
