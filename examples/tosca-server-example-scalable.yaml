@@ -29,7 +29,7 @@ topology_template:
         scalable:
           properties:
             min_instances: 1
-            default_instances: 3
+            default_instances: 2
             max_instances: 3
     software_for_cumulus:
       requirements:

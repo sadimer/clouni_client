@@ -18,7 +18,8 @@ services:
       - /tmp/clouni:/tmp/clouni
       - /etc/openstack:/tmp/openstack
       - ~/.ssh:/tmp/ssh
-    command: bash -c -l "cp -r /tmp/openstack /etc/openstack && cp -r /tmp/ssh ~/.ssh && grpc-cotea -p 50151 --host 0.0.0.0"
+      - ~/.aws:/tmp/aws
+    command: bash -c -l "cp -r /tmp/openstack /etc/openstack && cp -r /tmp/aws ~/.aws && cp -r /tmp/ssh ~/.ssh && grpc-cotea -p 50151 --host 0.0.0.0"
     build: grpc_cotea/
     ports:
       - "50151:50151/tcp"

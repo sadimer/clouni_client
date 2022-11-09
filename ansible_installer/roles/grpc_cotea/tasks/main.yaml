@@ -42,7 +42,19 @@
   become: true
   copy:
     src: /etc/openstack/clouds.yaml
-    dest: /etc/openstack
+    dest: /etc/openstack/
+
+- name: copy file
+  become: true
+  copy:
+    src: ~/.aws/credentials
+    dest: ~/.aws/
+
+- name: copy file
+  become: true
+  copy:
+    src: ~/.aws/config
+    dest: ~/.aws/
 
 - name: run server
   shell: setsid grpc-cotea -p {{ port }} --host {{ ansible_default_ipv4.address }} > $HOME/cotea.log 2>&1 < /dev/null &
