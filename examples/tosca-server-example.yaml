@@ -6,22 +6,16 @@ topology_template:
       type: tosca.nodes.Compute
       properties:
         meta: "cube_master=true"
-        public_address: 10.100.157.77
+        public_address: 10.100.150.100
         networks:
           default:
-            network_name: sandbox_net
+            network_name: test_ext
       capabilities:
         host:
           properties:
             num_cpus: 1
             disk_size: 10 GiB
             mem_size: 1 GiB
-        endpoint:
-          properties:
-            protocol: tcp
-            port: 22
-            initiator: target
-            ip_address: 0.0.0.0
         os:
           properties:
             architecture: x86_64

@@ -1,0 +1,63 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+node_types:
+  clouni.nodes.ServerExample:
+    derived_from: tosca.nodes.SoftwareComponent
+    attributes:
+      test:
+        type: string
+
+topology_template:
+  inputs:
+    test_1:
+      type: string
+      default: test
+  node_templates:
+    service_1:
+      properties:
+        component_version: { concat: [ "v", { token: [ { get_attribute: [ SELF, host, private_address ] }, '.', 0 ] } ] }
+      requirements:
+      - host:
+          node: tosca_server_example
+          relationship: test_relationship
+      interfaces:
+        Standard:
+          create:
+            implementation:
+              primary: ansible-operation-example.yaml
+            inputs:
+              test_public: { get_attribute: [ HOST, public_address ] }
+              test_public_prop: { get_property: [ HOST, public_address ] }
+              test_private: { get_attribute: [ HOST, private_address ] }
+              test_id_host: { concat: [{ get_attribute: [ HOST, tosca_id ] }, "-", { get_attribute: [ HOST, private_address ] }] }
+              test: { concat: [{ get_input: test_1 }, { get_attribute: [ HOST, tosca_id ] }] }
+              test_1: { get_property: [ SELF, component_version ] }
+              test_2: { token: [ { get_attribute: [ tosca_server_example, public_address ] }, '.', 1 ] }
+              test_3: { join: [ [ { get_attribute: [ tosca_server_example, private_address ] }, { get_property: [ tosca_server_example, public_address ] }, "0.0.0.0" ], "," ] }
+            outputs:
+              host_attr: [ HOST, private_address ]
+              self_attr: [ SELF, test ]
+          configure:
+            inputs:
+              test: test
+              test_1: { get_attribute: [ service_1, test ] }
+              test_3: { join: [ [ { get_attribute: [ tosca_server_example, private_address ] }, { get_property: [ tosca_server_example, public_address ] }, "0.0.0.0" ], "," ] }
+            implementation: ansible-operation-example.yaml
+      type: clouni.nodes.ServerExample
+    tosca_server_example:
+      properties:
+        public_address: 10.100.150.11
+        networks:
+          default:
+            network_name: test_ext
+      capabilities:
+        host:
+          properties:
+            num_cpus: 1
+            disk_size: 10 GiB
+            mem_size: 1 GiB
+        os:
+          properties:
+            architecture: x86_64
+            type: cirros
+            version: 0.4.0
+      type: tosca.nodes.Compute

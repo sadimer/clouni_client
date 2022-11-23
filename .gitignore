@@ -33,3 +33,5 @@ test
 template.yaml
 ansible_installer/hosts.ini
 id_vars*
+
+test.yaml

@@ -1,3 +1,4 @@
+import json
 from distutils.dir_util import copy_tree
 
 import paramiko
@@ -85,6 +86,11 @@ def main(args=None):
                         metavar="KEY=VALUE",
                         nargs='+',
                         help='extra arguments for configuration tool scripts')
+    parser.add_argument('--extra-dict',
+                        default='{}',
+                        type=str,
+                        metavar='<json dict>',
+                        help='extra arguments for configuration tool scripts passed as python dict')
     parser.add_argument('--debug',
                         default=False,
                         action='store_true',
@@ -140,6 +146,8 @@ def main(args=None):
                     extra[k] = int(v)
                 else:
                     extra[k] = float(v)
+
+    extra.update(json.loads(args.extra_dict))
     if default_grpc_cotea_endpoint:
         if default_grpc_cotea_endpoint.find('127.0.0.1') == -1 and default_grpc_cotea_endpoint.find(
                 'localhost') == -1:
@@ -228,7 +236,7 @@ def main(args=None):
         else:
             request.grpc_cotea_endpoint = ""
 
-        request.extra = yaml.dump({'global': extra}, Dumper=NoAliasDumper)
+        request.extra = yaml.dump(extra, Dumper=NoAliasDumper)
         response = stub.ClouniConfigurationTool(request)
     else:
         raise Exception("Unknown module type")

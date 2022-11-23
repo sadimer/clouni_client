@@ -6,17 +6,13 @@ node_types:
         configure:
           implementation: ansible-operation-example.yaml
           inputs:
-            test: { concat: [ "v", { get_property: [ SELF, component_version ] } ] }
-            test_2: { token: [ { get_property: [ HOST, public_address ] }, '.', 1 ] }
+            test: { token: [ { get_property: [ SELF, component_version ] }, '.', 1 ] }
+            test_2: { concat: ["addr: ", { get_attribute: [ HOST, public_address ] } ] }
         create:
           implementation: ansible-operation-example.yaml
           inputs:
             test: test
 topology_template:
-  inputs:
-    kubernetes_version:
-      type: string
-      default: 1.21.0
   node_templates:
     service_1:
       properties:
@@ -26,20 +22,6 @@ topology_template:
           node: tosca_server_example
           relationship: test_relationship
       type: clouni.nodes.ServerExample
-      interfaces:
-        Standard:
-          configure:
-            implementation: ansible-operation-example.yaml
-            inputs:
-              test_1: { join: [ ["prefix", { get_property: [ SELF, component_version ] }, "suffix" ], "_" ] }
-          create:
-            implementation:
-              primary: ansible-operation-example.yaml
-              dependencies:
-                - example-1.yaml
-                - example-2.yaml
-            inputs:
-              test: { join: [ ["prefix", 1111, "suffix" ], "_" ] }
     tosca_server_example:
       interfaces:
         Standard:
@@ -49,6 +31,17 @@ topology_template:
               test: test
       properties:
         public_address: 10.100.150.11
+      capabilities:
+        host:
+          properties:
+            num_cpus: 1
+            disk_size: 10 GiB
+            mem_size: 1 GiB
+        os:
+          properties:
+            architecture: x86_64
+            type: cirros
+            version: 0.4.0
       type: tosca.nodes.Compute
   relationship_templates:
     test_relationship:
