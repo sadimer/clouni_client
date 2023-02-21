@@ -1,0 +1,66 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+node_types:
+  clouni.nodes.ServerExample:
+    derived_from: tosca.nodes.SoftwareComponent
+
+topology_template:
+  inputs:
+    test_1:
+      type: string
+      default: test
+  node_templates:
+    service_1:
+      requirements:
+      - host:
+          node: tosca_server_example
+          relationship: test_relationship
+      artifacts:
+        test: ansible-operation-example.yaml
+        test_2:
+          file: ansible-operation-example.yaml
+          type: tosca.artifacts.File
+          deploy_path: roles
+          checksum: 7f641ab1b7b4bbaf8d619983037984e1
+          checksum_algorithm: md5
+      interfaces:
+        Standard:
+          create:
+            inputs:
+              test: test
+            implementation:
+              description: "Some operation"
+              timeout: 12
+              operation_host: HOST
+              primary: ansible-operation-example.yaml
+              dependencies:
+                - file: ansible-operation-example.yaml
+                  type: tosca.artifacts.File
+                  deploy_path: roles
+                  checksum: 7f641ab1b7b4bbaf8d619983037984e1
+                  checksum_algorithm: md5
+                - file: ansible-operation-example.yaml
+                  type: tosca.artifacts.File
+                  deploy_path: dependencies
+          configure: ansible-operation-example.yaml
+      type: clouni.nodes.ServerExample
+    tosca_server_example:
+      type: tosca.nodes.Compute
+      capabilities:
+        host:
+          properties:
+            num_cpus: 1
+            disk_size: 10 GiB
+            mem_size: 1 GiB
+        os:
+          properties:
+            architecture: x86_64
+            type: cirros
+            version: 0.4.0
+      interfaces:
+        Standard:
+          create:
+            implementation: operation-example.sh
+          configure:
+            implementation: ansible-operation-example.yaml
+            outputs:
+              addr: [ SELF, public_address ]

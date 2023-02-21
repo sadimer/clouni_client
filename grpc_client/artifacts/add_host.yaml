@@ -1,19 +1,19 @@
 - file:
-    path: '{{ playbook_dir }}/hosts.ini'
+    path: '{{ playbook_dir }}/{{ group }}_hosts.ini'
     state: touch
     mode: 0666
     modification_time: preserve
     access_time: preserve
 - lineinfile:
-    path: '{{ playbook_dir }}/hosts.ini'
+    path: '{{ playbook_dir }}/{{ group }}_hosts.ini'
     line: '[{{ group }}]'
 - lineinfile:
-    path: '{{ playbook_dir }}/hosts.ini'
+    path: '{{ playbook_dir }}/{{ group }}_hosts.ini'
     line: '{{ item[0] }} ansible_host={{ item[1] }} ansible_user={{ ansible_user }} ansible_pass={{ ansible_sudo_pass }}'
   when: ansible_sudo_pass is defined and host_ip is defined and item[1] != ''
   with_list: "{{ host_ip }}"
 - lineinfile:
-    path: '{{ playbook_dir }}/hosts.ini'
+    path: '{{ playbook_dir }}/{{ group }}_hosts.ini'
     line: '{{ item[0] }} ansible_host={{ item[1] }} ansible_user={{ ansible_user }}'
   when: ansible_sudo_pass is undefined and host_ip is defined and item[1] != ''
   with_list: "{{ host_ip }}"

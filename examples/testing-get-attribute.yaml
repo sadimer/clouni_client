@@ -48,7 +48,7 @@ topology_template:
         public_address: 10.100.150.11
         networks:
           default:
-            network_name: test_ext
+            network_name: mgmt
       capabilities:
         host:
           properties:
@@ -57,7 +57,6 @@ topology_template:
             mem_size: 1 GiB
         os:
           properties:
-            architecture: x86_64
-            type: cirros
-            version: 0.4.0
+            type: ubuntu
+            version: 18.04
       type: tosca.nodes.Compute

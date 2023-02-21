@@ -78,7 +78,7 @@ def main(args=None):
                         help='output file')
     parser.add_argument('--configuration-tool',
                         default="ansible",
-                        choices=['ansible', 'kubernetes'],
+                        choices=['ansible', 'kubernetes', 'terraform'],
                         help="configuration tool which DSL the template would be translated to"
                              "Default value = \"ansible\"")
     parser.add_argument('--extra',
