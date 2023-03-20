@@ -1,0 +1,7 @@
+namespace: "clouni"
+name: "clouni"
+version: "0.1.7"
+authors:
+    - Roman Stolyarov
+readme: README.md
+    
